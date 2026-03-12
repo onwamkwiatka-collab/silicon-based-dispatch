@@ -128,6 +128,31 @@ function progressBar(pct, color = C.blue) {
   );
 }
 
+
+// ── Description renderer ─────────────────────────────────────────
+function renderDesc(sections, accentColor) {
+  const wrap = div({
+    marginTop: '24px', padding: '16px', borderRadius: '12px',
+    background: C.panel, border: `1px solid ${C.border}`,
+    borderTop: `3px solid ${accentColor}`,
+  }, {});
+  sections.forEach(([title, body, first]) => {
+    const s = div({ marginBottom: '16px' }, {});
+    s.appendChild(div({
+      fontSize: first ? '14px' : '12px',
+      fontWeight: '700',
+      color: first ? C.text : accentColor,
+      marginBottom: '6px',
+      paddingBottom: first ? '8px' : '0',
+      borderBottom: first ? `1px solid ${C.border}` : 'none',
+    }, {}, title));
+    body.split('\n\n').forEach(para => {
+      s.appendChild(div({ fontSize: '12px', color: C.muted, lineHeight: '1.7', marginBottom: '6px' }, {}, para));
+    });
+    wrap.appendChild(s);
+  });
+  return wrap;
+}
 // ── OKR ──────────────────────────────────────────────────────────
 function renderOKR() {
   const quarters = state.okr?.quarters || [];
@@ -257,7 +282,53 @@ function renderOKR() {
   }));
   krsSection.appendChild(addRow);
 
-  return div({}, {}, qtabs, objCard, krsSection);
+  // OKR description
+  const desc = div({
+    marginTop: '24px', padding: '16px', borderRadius: '12px',
+    background: C.panel, border: `1px solid ${C.border}`,
+    borderTop: `3px solid ${C.purple}`,
+  }, {});
+
+  const sections = [
+    ['Metoda OKR — Objectives and Key Results', 'OKR to system zarządzania celami stworzony w latach siedemdziesiątych przez Andy'ego Grove'a w Intelu, a spopularyzowany przez Google na początku lat dwutysięcznych. Nazwa pochodzi od dwóch elementów które tworzą każdy cel: Objective — cel główny, oraz Key Results — kluczowe wyniki potwierdzające jego osiągnięcie.
+
+Fundamentalna zasada OKR brzmi: nie wystarczy wiedzieć dokąd zmierzasz, musisz wiedzieć jak zmierzysz że tam dotarłeś. Cel bez mierzalnych wyników jest życzeniem. Wyniki bez celu są listą zadań bez sensu. OKR łączy te dwa elementy w spójną całość.', true],
+    ['Objective — cel główny', 'Objective powinien być inspirujący, konkretny i osiągalny w horyzoncie jednego kwartału. Dobry cel odpowiada na pytanie: co chcę osiągnąć i dlaczego to ważne. Cel nie jest zadaniem do wykonania — jest stanem który chcesz osiągnąć.
+
+Cel powinien być ambitny ale realistyczny. Twórcy metody zalecają kalibrację na poziomie siedemdziesięciu procent — jeśli jesteś pewien że osiągniesz sto procent, cel jest zbyt łatwy.', false],
+    ['Key Results — kluczowe wyniki', 'Kluczowe wyniki to mierzalne dowody że cel został osiągnięty. Każdy wynik musi mieć liczbę — bez liczby nie ma możliwości oceny postępu. Zalecane są dwa do czterech wyników na jeden cel.
+
+Kluczowe wyniki nie są listą działań. "Zadzwonić do dziesięciu klientów" to działanie. "Pozyskać trzech nowych klientów" to wynik.', false],
+    ['Rytm pracy z OKR', 'OKR działa w cyklach kwartalnych. Na początku kwartału definiujesz cel i kluczowe wyniki. Raz w tygodniu aktualizujesz postęp i zadajesz sobie pytanie: czy to co robiłem przybliżyło mnie do celu. Na końcu kwartału oceniasz wyniki i definiujesz cel na kolejny kwartał.
+
+Cotygodniowy przegląd jest kluczowy. Piętnaście minut tygodniowo wystarcza żeby system działał.', false],
+    ['OKR a ADHD', 'Dla osób z ADHD OKR rozwiązuje konkretny problem: brak połączenia między codziennymi działaniami a długoterminowym kierunkiem. ADHD sprzyja reaktywności — robisz to co pojawia się przed tobą, a nie to co prowadzi do celu.
+
+OKR tworzy zewnętrzny punkt odniesienia który pozwala ocenić każde nowe zadanie jednym pytaniem: czy to przybliża mnie do celu kwartalnego. Jeśli nie — może poczekać lub odpada.
+
+Ważne jest żeby nie mieć więcej niż jednego celu kwartalnego na początku. Jeden cel zmusza do wyboru co jest naprawdę ważne.', false],
+    ['OKR a pozostałe elementy systemu', 'OKR jest kompasem dla całego systemu. Macierz Eisenhowera filtruje zadania przez pryzmat ważności — ale ważność powinna być oceniana względem OKR, nie względem tego co krzyczy najgłośniej. Kanban realizuje zadania które przeszły przez filtr Eisenhowera. Notatki zbierają obserwacje które mogą wpłynąć na kolejny OKR.
+
+Bez OKR Eisenhower i kanban są narzędziami bez celu — pomagają robić rzeczy sprawnie, ale nie gwarantują że robisz właściwe rzeczy.', false],
+  ];
+
+  sections.forEach(([title, body, first]) => {
+    const s = div({ marginBottom: '16px' }, {});
+    s.appendChild(div({
+      fontSize: first ? '14px' : '12px',
+      fontWeight: '700',
+      color: first ? C.text : C.purple,
+      marginBottom: '6px',
+      paddingBottom: first ? '8px' : '0',
+      borderBottom: first ? `1px solid ${C.border}` : 'none',
+    }, {}, title));
+    body.split('\n\n').forEach(para => {
+      s.appendChild(div({ fontSize: '12px', color: C.muted, lineHeight: '1.7', marginBottom: '6px' }, {}, para));
+    });
+    desc.appendChild(s);
+  });
+
+  return div({}, {}, qtabs, objCard, krsSection, desc);
 }
 
 // ── EISENHOWER ────────────────────────────────────────────────────
@@ -357,23 +428,18 @@ function renderEisenhower() {
     grid.appendChild(qDiv);
   }
 
-  grid.appendChild(div({ fontSize: '11px', color: C.dim, textAlign: 'center', gridColumn: '1/-1', marginTop: '4px' }, {}, 'Metoda OKR — Objectives and Key Results
-OKR to system zarządzania celami stworzony w latach siedemdziesiątych przez Andy'ego Grove'a w Intelu, a spopularyzowany przez Google na początku lat dwutysięcznych. Nazwa pochodzi od dwóch elementów które tworzą każdy cel: Objective — cel główny, oraz Key Results — kluczowe wyniki potwierdzające jego osiągnięcie.
-Fundamentalna zasada OKR brzmi: nie wystarczy wiedzieć dokąd zmierzasz, musisz wiedzieć jak zmierzysz że tam dotarłeś. Cel bez mierzalnych wyników jest życzeniem. Wyniki bez celu są listą zadań bez sensu. OKR łączy te dwa elementy w spójną całość.
-Objective — cel główny
-Objective powinien być inspirujący, konkretny i osiągalny w horyzoncie jednego kwartału. Dobry cel odpowiada na pytanie: co chcę osiągnąć i dlaczego to ważne. Cel nie jest zadaniem do wykonania — jest stanem który chcesz osiągnąć. Różnica między "zrobić stronę internetową" a "zbudować obecność online która przyciąga klientów" ilustruje tę różnicę. Pierwsze to zadanie, drugie to cel.
-Cel powinien być ambitny ale realistyczny. Twórcy metody zalecają kalibrację na poziomie siedemdziesięciu procent — jeśli jesteś pewien że osiągniesz sto procent, cel jest zbyt łatwy. Jednocześnie cel nieosiągalny demoralizuje zamiast motywować.
-Key Results — kluczowe wyniki
-Kluczowe wyniki to mierzalne dowody że cel został osiągnięty. Każdy wynik musi mieć liczbę — bez liczby nie ma możliwości oceny postępu. Dobry kluczowy wynik odpowiada na pytanie: skąd będę wiedział że osiągnąłem cel. Zalecane są dwa do czterech wyników na jeden cel. Więcej rozmywa uwagę, mniej może nie oddawać pełnego obrazu sukcesu.
-Kluczowe wyniki nie są listą działań. "Zadzwonić do dziesięciu klientów" to działanie. "Pozyskać trzech nowych klientów" to wynik. Różnica jest subtelna ale istotna — wynik mówi co osiągasz, działanie mówi co robisz.
-Rytm pracy z OKR
-OKR działa w cyklach kwartalnych. Na początku kwartału definiujesz cel i kluczowe wyniki — to zajmuje trzydzieści minut skupionej pracy. Raz w tygodniu, najlepiej w stały dzień, aktualizujesz postęp każdego wyniku i zadajesz sobie jedno pytanie: czy to co robiłem w tym tygodniu przybliżyło mnie do celu. Na końcu kwartału oceniasz co osiągnąłeś, wyciągasz wnioski i definiujesz cel na kolejny kwartał.
-Cotygodniowy przegląd jest kluczowy. OKR bez regularnej oceny postępu staje się dokumentem który tworzysz raz a potem zapominasz. Piętnaście minut tygodniowo wystarcza żeby system działał.
-OKR a ADHD
-Dla osób z ADHD OKR rozwiązuje konkretny problem: brak połączenia między codziennymi działaniami a długoterminowym kierunkiem. ADHD sprzyja reaktywności — robisz to co pojawia się przed tobą, a nie to co prowadzi do celu. OKR tworzy zewnętrzny punkt odniesienia który pozwala ocenić każde nowe zadanie jednym pytaniem: czy to przybliża mnie do celu kwartalnego. Jeśli nie — może poczekać lub odpada.
-Ważne jest żeby nie mieć więcej niż jednego celu kwartalnego na początku. Jeden cel zmusza do wyboru co jest naprawdę ważne. Wiele celów jednocześnie to brak celu.
-OKR a pozostałe elementy systemu
-OKR jest kompasem dla całego systemu. Macierz Eisenhowera filtruje zadania przez pryzmat ważności i pilności — ale ważność powinna być oceniana względem OKR, nie względem tego co krzyczy najgłośniej. Kanban realizuje zadania które przeszły przez filtr Eisenhowera. Notatki zbierają obserwacje które mogą wpłynąć na kolejny OKR.'));
+
+  const eisDesc = renderDesc([
+    ['Macierz Eisenhowera', 'Macierz Eisenhowera to narzędzie priorytetyzacji stworzone na podstawie filozofii pracy Dwighta Eisenhowera, trzydziestego czwartego prezydenta Stanów Zjednoczonych i naczelnego dowódcy wojsk alianckich podczas drugiej wojny światowej. Eisenhower zarządzał jednocześnie tysiącami decyzji o różnej wadze i pilności — jego metoda polegała na nieustannym rozróżnianiu między tym co ważne a tym co pilne, ponieważ te dwie kategorie rzadko pokrywają się ze sobą.\n\nStephen Covey spopularyzował tę metodę w książce Siedem nawyków skutecznego działania, wprowadzając podział na cztery ćwiartki które dziś stanowią podstawę metody.', true],
+    ['Ćwiartka I — Ważne i pilne', 'Sytuacje kryzysowe, terminy których nie można przesunąć, awarie i nagłe problemy wymagające natychmiastowej reakcji. Praca w tej ćwiartce jest wyczerpująca i reaktywna. Osoby które spędzają tu większość czasu działają w trybie ciągłego gaszenia pożarów. Celem jest minimalizowanie tej ćwiartki przez lepsze planowanie.', false],
+    ['Ćwiartka II — Ważne i niepilne', 'Serce skutecznego działania. Planowanie, rozwój kompetencji, budowanie relacji, praca strategiczna, profilaktyka. Rzeczy które nie krzyczą ale decydują o długoterminowych wynikach. Paradoks tej ćwiartki polega na tym że nigdy nie jest na nią czas dopóki świadomie się go nie wygospodaruje. Osoby skuteczne chronią tę ćwiartkę jak najcenniejszy zasób.', false],
+    ['Ćwiartka III — Nieważne i pilne', 'Pułapka. Telefony, maile, spotkania które wydają się pilne bo ktoś inny ich chce, ale nie przybliżają do twoich celów. Ta ćwiartka jest największym złodziejem czasu ponieważ pilność wywołuje złudzenie ważności. Zadania z tej ćwiartki należy delegować, skracać lub eliminować.', false],
+    ['Ćwiartka IV — Nieważne i niepilne', 'Rozpraszacze. Bezcelowe scrollowanie, zajęcia które nie dają ani odpoczynku ani wartości. Należy je eliminować bez wyrzutów sumienia.', false],
+    ['Rytm pracy z macierzą', 'Macierz nie jest narzędziem codziennym — jest narzędziem tygodniowym. Raz w tygodniu, najlepiej w niedzielę wieczorem, przeglądasz wszystko co zebrało się przez tydzień i przypisujesz każdemu zadaniu ćwiartkę. Ten przegląd zajmuje piętnaście minut. Efektem jest lista zadań do kanbana na kolejny tydzień.\n\nCodzienna praca z macierzą sprowadza się do jednego pytania gdy pojawia się nowe zadanie: do której ćwiartki należy. Odpowiedź zajmuje trzydzieści sekund i chroni przed pochłonięciem przez rzeczy pilne kosztem ważnych.', false],
+    ['Macierz a ADHD', 'ADHD powoduje szczególną podatność na ćwiartkę trzecią. Pilność aktywuje dopaminę, co sprawia że zadania które krzyczą wydają się ważniejsze niż są. Macierz Eisenhowera jest zewnętrznym narzędziem które zastępuje ocenę impulsywną oceną systemową. Zamiast reagować na to co czujesz że jest ważne, sprawdzasz to co faktycznie jest ważne przez pryzmat dwóch pytań: czy to przybliża mnie do celu kwartalnego i czy muszę to zrobić teraz.', false],
+    ['Macierz a pozostałe elementy systemu', 'Macierz jest filtrem między OKR a kanbanem. OKR mówi dokąd zmierzasz. Macierz decyduje które zadania zasługują na twój czas. Kanban realizuje zadania które przeszły przez ten filtr. Bez macierzy kanban wypełnia się wszystkim — z macierzą wypełnia się tym co naprawdę ważne.', false],
+  ], C.blue);
+  grid.appendChild(div({ gridColumn: '1/-1' }, {}, eisDesc));
   return grid;
 }
 
@@ -469,6 +535,16 @@ function renderKanban() {
   });
 
   wrap.appendChild(grid);
+
+  const kanDesc = renderDesc([
+    ['Kanban', 'Kanban to metoda zarządzania przepływem pracy wywodząca się z japońskiego systemu produkcji Toyoty. Słowo kanban oznacza po japońsku tablicę lub kartę sygnałową. W latach czterdziestych Taiichi Ohno zaprojektował system w którym każde zadanie jest reprezentowane przez fizyczną kartę przesuwającą się przez etapy produkcji. Celem nie było przyspieszenie pracy — celem było uwidocznienie gdzie praca się zatrzymuje.\n\nW zastosowaniu osobistym kanban sprowadza się do trzech zasad: wizualizuj pracę, ogranicz pracę w toku, zarządzaj przepływem.', true],
+    ['Wizualizacja pracy', 'Kolumny kanbana reprezentują etapy przez które przechodzi każde zadanie: Do zrobienia, W toku, Przegląd, Gotowe. Każde zadanie jest widoczne jako karta. Widząc wszystkie karty jednocześnie widzisz stan swojej pracy — gdzie są zatory, co czeka za długo, co jest w ruchu.\n\nWizualizacja jest szczególnie ważna dla osób z ADHD ponieważ eliminuje zależność od pamięci roboczej. Nie musisz pamiętać co masz do zrobienia — widzisz to.', false],
+    ['Limit pracy w toku', 'To najważniejsza zasada kanbana. Maksymalnie trzy zadania mogą być jednocześnie w kolumnie W toku. Limit ten wymusza dokończenie przed rozpoczęciem nowego.\n\nNaturalny odruch przy nowym zadaniu to dodanie go do listy w toku. Kanban mówi: nie. Najpierw zamknij jedno z otwartych. Efekt jest paradoksalny: robiąc mniej rzeczy jednocześnie robisz więcej rzeczy szybciej.', false],
+    ['Zarządzanie przepływem', 'Zdrowy kanban charakteryzuje się równomiernym przepływem kart od lewej do prawej. Jeśli karty gromadzą się w jednej kolumnie, to sygnał że coś blokuje przepływ.\n\nCodziennie rano zadaj trzy pytania: co mogę dziś skończyć, co blokuje przepływ, czy limit W toku jest przestrzegany.', false],
+    ['Kanban a ADHD', 'Kanban rozwiązuje dwa problemy typowe dla ADHD: problem inicjacji i problem priorytetu. Problem inicjacji — trudność z rozpoczęciem zadania — jest mniejszy gdy widzisz konkretną kartę z konkretnym zadaniem zamiast abstrakcyjnej listy w głowie.\n\nLimit trzech zadań w toku chroni przed charakterystycznym dla ADHD wzorcem rozpoczynania wielu rzeczy jednocześnie bez kończenia żadnej.', false],
+    ['Kanban a pozostałe elementy systemu', 'Kanban jest silnikiem wykonawczym systemu. OKR wyznacza kierunek, macierz Eisenhowera selekcjonuje zadania, kanban je realizuje. Karty w kanbanie powinny pochodzić głównie z macierzy Eisenhowera — to gwarantuje że codzienna praca jest połączona z celami kwartalnymi.', false],
+  ], C.yellow);
+  wrap.appendChild(kanDesc);
   return wrap;
 }
 
@@ -534,6 +610,13 @@ function renderNotes() {
     wrap.appendChild(div({ color: C.muted, textAlign: 'center', padding: '60px 0', fontSize: '14px' }, {}, 'Brak notatek.'));
   }
 
+  const notesDesc = renderDesc([
+    ['Notatki — filozofia przechwytywania', 'Notatki pełnią funkcję którą David Allen w metodzie Getting Things Done nazywa capture — przechwytywanie. Ludzki umysł jest zły w przechowywaniu informacji ale dobry w przetwarzaniu. Notatki przejmują funkcję przechowywania żeby umysł mógł skupić się na myśleniu.\n\nKażda myśl która pojawia się w głowie i nie zostanie natychmiast uchwycona jest zagrożona utratą. Obserwacja z dyżuru która mogłaby stać się produktem, pomysł na film który przyszedł podczas jazdy karetką, rzecz do sprawdzenia która pojawiła się podczas wykładu — wszystko to ląduje w notatce natychmiast, bez kategoryzowania, bez oceniania czy jest wystarczająco ważne.', true],
+    ['Notatki jako bufor tymczasowy', 'Notatki nie są archiwum — są poczekalną. Każda notatka ma jeden z trzech losów: staje się zadaniem w macierzy Eisenhowera, staje się pomysłem w pipeline produktowym, lub zostaje usunięta.\n\nRaz w tygodniu, podczas niedzielnego przeglądu, przeglądasz wszystkie notatki z tygodnia i podejmujesz decyzję o każdej z nich. Ten proces zajmuje pięć do dziesięciu minut i czyści przestrzeń na nowe przechwytywanie.', false],
+    ['Notatki a ADHD', 'ADHD generuje nieproporcjonalnie dużo myśli — szybkie skojarzenia, nagłe pomysły, obserwacje które pojawiają się w nieoczekiwanych momentach. Bez systemu przechwytywania większość z nich ginie, co generuje frustrację i poczucie że marnuje się potencjał.\n\nSystem notatek zmienia tę dynamikę. Zamiast próbować zapamiętać myśl i jednocześnie kontynuować bieżące zadanie, zapisujesz ją w dwie sekundy i wracasz do pracy. Umysł jest spokojniejszy gdy wie że nic nie zostanie utracone.\n\nPrzypinanie notatek służy do oznaczania tych które wymagają uwagi podczas najbliższego przeglądu.', false],
+    ['Notatki a pozostałe elementy systemu', 'Notatki zasilają cały system. Obserwacja z dyżuru może stać się nowym produktem w pipeline. Wniosek z tygodnia może zmienić OKR na kolejny kwartał. Zadanie które pojawiło się nagle trafia przez notatki do macierzy Eisenhowera zamiast przerywać bieżącą pracę. Notatki są wejściem do systemu — wszystko inne jest przetwarzaniem.', false],
+  ], C.green);
+  wrap.appendChild(notesDesc);
   return wrap;
 }
 
