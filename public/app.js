@@ -199,7 +199,8 @@ function renderOKR() {
     }, {}, String(i + 1)));
 
     const krBody = div({ flex: '1' }, {});
-    krBody.appendChild(div({ color: C.text, fontSize: '13px', marginBottom: '10px', lineHeight: '1.4' }, {}, kr.text));
+    krBody.appendChild(div({ color: C.text, fontSize: '13px', marginBottom: '6px', lineHeight: '1.4' }, {}, kr.text));
+    if (kr.created) krBody.appendChild(div({ fontSize: '10px', color: C.dim, marginBottom: '6px' }, {}, `Dodano: ${kr.created}`));
 
     const sliderRow = div({ display: 'flex', alignItems: 'center', gap: '10px' }, {});
     const slider = el('input', { type: 'range', min: '0', max: '100', value: String(kr.progress), style: { flex: '1', accentColor: kr.progress >= 70 ? C.green : kr.progress >= 40 ? C.yellow : C.blue } });
@@ -226,7 +227,7 @@ function renderOKR() {
   addRow.appendChild(krInput);
   addRow.appendChild(makeBtn('+', () => {
     if (!newKRText.trim()) return;
-    setState(d => ({ ...d, okr: { quarters: d.okr.quarters.map(q => q.id !== active.id ? q : { ...q, krs: [...q.krs, { id: Date.now(), text: newKRText.trim(), progress: 0 }] }) } }));
+    setState(d => ({ ...d, okr: { quarters: d.okr.quarters.map(q => q.id !== active.id ? q : { ...q, krs: [...q.krs, { id: Date.now(), text: newKRText.trim(), progress: 0, created: new Date().toLocaleString('pl-PL') }] }) } }));
     krInput.value = ''; newKRText = '';
   }));
   krsSection.appendChild(addRow);
@@ -280,7 +281,7 @@ function renderEisenhower() {
       onClick: () => {
         const text = prompt(`Nowe zadanie (${qd.label}):`);
         if (!text?.trim()) return;
-        setState(d => ({ ...d, eisenhower: { ...d.eisenhower, [qk]: [...(d.eisenhower[qk] || []), { id: Date.now(), text: text.trim(), done: false }] } }));
+        setState(d => ({ ...d, eisenhower: { ...d.eisenhower, [qk]: [...(d.eisenhower[qk] || []), { id: Date.now(), text: text.trim(), done: false, created: new Date().toLocaleString('pl-PL') }] } }));
       }
     }, '+');
     hdr.appendChild(addBtn);
@@ -305,6 +306,7 @@ function renderEisenhower() {
       });
       tDiv.appendChild(cb);
       tDiv.appendChild(span({ flex: '1', fontSize: '12px', color: C.text, lineHeight: '1.4', textDecoration: t.done ? 'line-through' : 'none' }, {}, t.text));
+      if (t.created) tDiv.appendChild(span({ fontSize: '10px', color: C.dim, flexShrink: '0' }, {}, t.created));
       const del = btn({ background: 'none', border: 'none', color: C.dim, cursor: 'pointer', fontSize: '13px', padding: '0', flexShrink: '0' }, {
         onClick: () => setState(d => ({ ...d, eisenhower: { ...d.eisenhower, [qk]: d.eisenhower[qk].filter(x => x.id !== t.id) } }))
       }, '✕');
@@ -375,7 +377,7 @@ function renderKanban() {
         if (!text?.trim()) return;
         const prios = ['high', 'medium', 'low'];
         const prio = prompt('Priorytet (high/medium/low):', 'medium') || 'medium';
-        setState(d => ({ ...d, kanban: { cards: [...d.kanban.cards, { id: Date.now(), col: col.id, text: text.trim(), priority: prios.includes(prio) ? prio : 'medium' }] } }));
+        setState(d => ({ ...d, kanban: { cards: [...d.kanban.cards, { id: Date.now(), col: col.id, text: text.trim(), priority: prios.includes(prio) ? prio : 'medium', created: new Date().toLocaleString('pl-PL') }] } }));
       }
     }, '+'));
     colDiv.appendChild(hdr);
@@ -395,7 +397,10 @@ function renderKanban() {
         onClick: () => setState(d => ({ ...d, kanban: { cards: d.kanban.cards.filter(c => c.id !== card.id) } }))
       }, '✕'));
       cardDiv.appendChild(top);
-      cardDiv.appendChild(span({ fontSize: '9px', fontWeight: '700', color: p.color, background: p.color + '22', borderRadius: '4px', padding: '2px 6px' }, {}, p.label));
+      const cardBottom = div({ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }, {});
+      cardBottom.appendChild(span({ fontSize: '9px', fontWeight: '700', color: p.color, background: p.color + '22', borderRadius: '4px', padding: '2px 6px' }, {}, p.label));
+      if (card.created) cardBottom.appendChild(span({ fontSize: '9px', color: C.dim }, {}, card.created));
+      cardDiv.appendChild(cardBottom);
       colDiv.appendChild(cardDiv);
     });
 
@@ -416,7 +421,7 @@ function renderNotes() {
     const title = prompt('Tytuł:');
     if (!title?.trim()) return;
     const body = prompt('Treść (opcjonalnie):') || '';
-    setState(d => ({ ...d, notes: [...(d.notes || []), { id: Date.now(), title: title.trim(), body, pinned: false, created: new Date().toLocaleDateString('pl-PL') }] }));
+    setState(d => ({ ...d, notes: [...(d.notes || []), { id: Date.now(), title: title.trim(), body, pinned: false, created: new Date().toLocaleString('pl-PL') }] }));
   }));
   wrap.appendChild(topBar);
 
@@ -472,18 +477,19 @@ function renderNotes() {
 }
 
 // ── TABS ──────────────────────────────────────────────────────────
-const TAB_DESCRIPTIONS = {
-  okr: 'OKR działa na poziomie strategicznym. Raz na kwartał definiujesz jeden cel główny — konkretny, mierzalny, osiągalny w 90 dni. Cel rozkładasz na 2-4 kluczowe wyniki. Raz w tygodniu aktualizujesz suwaki postępu. Jeśli zadanie w kanbanie nie przybliża do żadnego OKR — zapytaj czy warto je robić.',
-  eisenhower: 'Używasz raz w tygodniu — najlepiej w niedzielę wieczorem przez 15 minut. Ważne i niepilne to tu buduje się długoterminowa wartość — chroń ten czas. Do kanbana trafia tylko to co przeszło przez ten filtr.',
-  kanban: 'Poziom operacyjny — co robisz dziś i jutro. Twardy limit: 3 zadania w toku jednocześnie. Zanim zaczniesz nowe, zamknij jedno otwarte. Zadanie wchodzi z lewej, wychodzi prawą stroną.',
-  notes: 'Bufor między rzeczywistością a systemem. Wszystko co pojawia się w głowie ląduje tu natychmiast. Raz w tygodniu podczas przeglądu niedzielnego decydujesz: zadanie do Eisenhowera, pomysł do pipeline, czy można usunąć.',
-};
 const TABS = [
   { id: 'okr',        label: '🎯 OKR'      },
   { id: 'eisenhower', label: '⬛ Priorytety' },
   { id: 'kanban',     label: '📋 Kanban'   },
   { id: 'notes',      label: '📝 Notatki'  },
 ];
+
+const TAB_DESCRIPTIONS = {
+  okr:        'OKR działa na poziomie strategicznym. Raz na kwartał definiujesz jeden cel główny — konkretny, mierzalny, osiągalny w 90 dni. Cel rozkładasz na 2-4 kluczowe wyniki. Raz w tygodniu aktualizujesz suwaki postępu. Jeśli zadanie w kanbanie nie przybliża do żadnego OKR — zapytaj czy warto je robić.',
+  eisenhower: 'Używasz raz w tygodniu — najlepiej w niedzielę wieczorem przez 15 minut. Ważne i niepilne to tu buduje się długoterminowa wartość — chroń ten czas. Do kanbana trafia tylko to co przeszło przez ten filtr.',
+  kanban:     'Poziom operacyjny — co robisz dziś i jutro. Twardy limit: 3 zadania w toku jednocześnie. Zanim zaczniesz nowe, zamknij jedno otwarte. Zadanie wchodzi z lewej, wychodzi prawą stroną.',
+  notes:      'Bufor między rzeczywistością a systemem. Wszystko co pojawia się w głowie ląduje tu natychmiast. Raz w tygodniu podczas przeglądu niedzielnego decydujesz: zadanie do Eisenhowera, pomysł do pipeline, czy można usunąć.',
+};
 
 // ── RENDER ────────────────────────────────────────────────────────
 function render() {
@@ -511,7 +517,7 @@ function render() {
       span({ color: C.muted, fontWeight: '400' }, {}, ' BASED '),
       span({ color: C.text }, {}, 'DISPATCH'),
     ),
-   div({ fontSize: '12px', color: C.muted, lineHeight: '1.6', marginBottom: '16px', padding: '10px 14px', background: C.panel, borderRadius: '8px', borderLeft: `3px solid ${C.blue}` }, {}, TAB_DESCRIPTIONS[activeTab] || '')
+    div({ fontSize: '10px', color: C.dim, marginTop: '2px' }, {}, `Aktualizacja: ${state.lastUpdated}`)
   ));
 
   const stats = div({ display: 'flex', gap: '6px' }, {});
@@ -552,6 +558,17 @@ function render() {
 
   // Content
   const content = div({ padding: '16px' }, {});
+
+  // Description banner
+  if (TAB_DESCRIPTIONS[activeTab]) {
+    content.appendChild(div({
+      fontSize: '12px', color: C.muted, lineHeight: '1.6',
+      marginBottom: '16px', padding: '10px 14px',
+      background: C.panel, borderRadius: '8px',
+      borderLeft: `3px solid ${C.blue}`,
+    }, {}, TAB_DESCRIPTIONS[activeTab]));
+  }
+
   if (activeTab === 'okr')        content.appendChild(renderOKR());
   if (activeTab === 'eisenhower') content.appendChild(renderEisenhower());
   if (activeTab === 'kanban')     content.appendChild(renderKanban());
