@@ -258,11 +258,13 @@ function renderEisenhower() {
         const task = (state.eisenhower[dragData.q] || []).find(t => t.id === dragData.id);
         if (!task) return;
         setState(d => ({
-          ...d, eisenhower: {
+          ...d,
+          eisenhower: {
             ...d.eisenhower,
             [dragData.q]: d.eisenhower[dragData.q].filter(t => t.id !== dragData.id),
-            [qk]: [...(d.eisenhower[qk] || []), task],
-          }
+            [qk]: [...(d.eisenhower[qk] || []), { ...task, eisQ: qk }],
+          },
+          kanban: { cards: (d.kanban?.cards || []).map(c => c.id === task.id ? { ...c, priority: EQ_PRIO[qk] } : c) }
         }));
         dragData = null;
       }
@@ -281,7 +283,12 @@ function renderEisenhower() {
       onClick: () => {
         const text = prompt(`Nowe zadanie (${qd.label}):`);
         if (!text?.trim()) return;
-        setState(d => ({ ...d, eisenhower: { ...d.eisenhower, [qk]: [...(d.eisenhower[qk] || []), { id: Date.now(), text: text.trim(), done: false, created: new Date().toLocaleString('pl-PL') }] } }));
+        const newTask = { id: Date.now(), text: text.trim(), done: false, created: new Date().toLocaleString('pl-PL'), eisQ: qk };
+        setState(d => ({
+          ...d,
+          eisenhower: { ...d.eisenhower, [qk]: [...(d.eisenhower[qk] || []), newTask] },
+          kanban: { cards: [...(d.kanban?.cards || []), { id: newTask.id, col: 'todo', text: newTask.text, priority: EQ_PRIO[qk], created: newTask.created, fromEis: true }] }
+        }));
       }
     }, '+');
     hdr.appendChild(addBtn);
@@ -308,7 +315,11 @@ function renderEisenhower() {
       tDiv.appendChild(span({ flex: '1', fontSize: '12px', color: C.text, lineHeight: '1.4', textDecoration: t.done ? 'line-through' : 'none' }, {}, t.text));
       if (t.created) tDiv.appendChild(span({ fontSize: '10px', color: C.dim, flexShrink: '0' }, {}, t.created));
       const del = btn({ background: 'none', border: 'none', color: C.dim, cursor: 'pointer', fontSize: '13px', padding: '0', flexShrink: '0' }, {
-        onClick: () => setState(d => ({ ...d, eisenhower: { ...d.eisenhower, [qk]: d.eisenhower[qk].filter(x => x.id !== t.id) } }))
+        onClick: () => setState(d => ({
+          ...d,
+          eisenhower: { ...d.eisenhower, [qk]: d.eisenhower[qk].filter(x => x.id !== t.id) },
+          kanban: { cards: (d.kanban?.cards || []).filter(c => c.id !== t.id) }
+        }))
       }, '✕');
       tDiv.appendChild(del);
       qDiv.appendChild(tDiv);
@@ -325,6 +336,9 @@ function renderEisenhower() {
   return grid;
 }
 
+// ── EISENHOWER → KANBAN priority map ─────────────────────────────
+const EQ_PRIO = { q1: 'high', q2: 'medium', q3: 'low', q4: 'none' };
+
 // ── KANBAN ────────────────────────────────────────────────────────
 const COLS = [
   { id: 'todo',   label: 'Do zrobienia', color: C.muted  },
@@ -332,7 +346,12 @@ const COLS = [
   { id: 'review', label: 'Przegląd',     color: C.yellow },
   { id: 'done',   label: 'Gotowe',       color: C.green  },
 ];
-const PRIO = { high: { label: 'Wysoki', color: C.red }, medium: { label: 'Średni', color: C.yellow }, low: { label: 'Niski', color: C.green } };
+const PRIO = {
+  high:   { label: 'Ważne + Pilne',       color: C.red    },
+  medium: { label: 'Ważne + Niepilne',    color: C.blue   },
+  low:    { label: 'Nieważne + Pilne',    color: C.yellow },
+  none:   { label: 'Nieważne + Niepilne', color: C.muted  },
+};
 
 function renderKanban() {
   const cards = state.kanban?.cards || [];
@@ -373,11 +392,9 @@ function renderKanban() {
     ));
     hdr.appendChild(btn({ background: 'none', border: `1px solid ${C.border2}`, borderRadius: '6px', color: C.muted, padding: '2px 8px', cursor: 'pointer', fontSize: '13px' }, {
       onClick: () => {
-        const text = prompt('Nowe zadanie:');
+        const text = prompt('Nowe zadanie (bez priorytetu — użyj zakładki Priorytety aby przypisać ćwiartkę):');
         if (!text?.trim()) return;
-        const prios = ['high', 'medium', 'low'];
-        const prio = prompt('Priorytet (high/medium/low):', 'medium') || 'medium';
-        setState(d => ({ ...d, kanban: { cards: [...d.kanban.cards, { id: Date.now(), col: col.id, text: text.trim(), priority: prios.includes(prio) ? prio : 'medium', created: new Date().toLocaleString('pl-PL') }] } }));
+        setState(d => ({ ...d, kanban: { cards: [...d.kanban.cards, { id: Date.now(), col: col.id, text: text.trim(), priority: 'none', created: new Date().toLocaleString('pl-PL') }] } }));
       }
     }, '+'));
     colDiv.appendChild(hdr);
@@ -392,7 +409,10 @@ function renderKanban() {
         ondragstart: () => { dragData = { cardId: card.id }; },
       });
       const top = div({ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px', marginBottom: '6px' }, {});
-      top.appendChild(span({ fontSize: '11px', color: C.text, lineHeight: '1.4', flex: '1' }, {}, card.text));
+      const cardTextWrap = div({ flex: '1', display: 'flex', flexDirection: 'column', gap: '2px' }, {});
+      cardTextWrap.appendChild(span({ fontSize: '11px', color: C.text, lineHeight: '1.4' }, {}, card.text));
+      if (card.fromEis) cardTextWrap.appendChild(span({ fontSize: '9px', color: C.muted }, {}, '⬛ z Priorytetów'));
+      top.appendChild(cardTextWrap);
       top.appendChild(btn({ background: 'none', border: 'none', color: C.dim, cursor: 'pointer', fontSize: '12px', padding: '0', flexShrink: '0' }, {
         onClick: () => setState(d => ({ ...d, kanban: { cards: d.kanban.cards.filter(c => c.id !== card.id) } }))
       }, '✕'));
