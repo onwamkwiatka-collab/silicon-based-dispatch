@@ -866,19 +866,23 @@ function renderLoading() {
 renderLoading();
 
 onAuthStateChanged(auth, async (user) => {
-  currentUser = user;
   if (!user) {
+    // Clear local data on logout — never leak between accounts
+    currentUser = null;
+    localStorage.removeItem(SK);
+    state = defaultData();
     renderLogin();
     return;
   }
-  // Load from cloud, fall back to localStorage
+  currentUser = user;
+  // Always load from cloud first — ignore localStorage (belongs to previous session)
   const cloudData = await loadFromCloud();
   if (cloudData) {
     state = cloudData;
     localStorage.setItem(SK, JSON.stringify(state));
   } else {
-    state = load();
-    // First login — push local data to cloud
+    // New user — start fresh, save defaults to cloud
+    state = defaultData();
     save(state);
   }
   render();
