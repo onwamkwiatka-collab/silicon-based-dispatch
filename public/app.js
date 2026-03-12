@@ -880,7 +880,7 @@ function renderLogin() {
   }, '🔑 Zaloguj przez Google');
 
   box.appendChild(loginBtn);
-  box.appendChild(div({ fontSize: '11px', color: C.dim, marginTop: '20px' }, {}, 'Dane zapisywane w chmurze · każdy użytkownik ma swoje konto'));
+  box.appendChild(div({ fontSize: '11px', color: C.dim, marginTop: '20px' }, {}, 'Dane zapisywane w chmurze Google'));
   root.appendChild(box);
 }
 
