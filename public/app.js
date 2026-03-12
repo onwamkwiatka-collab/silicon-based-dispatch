@@ -56,24 +56,48 @@ function defaultData() {
     okr: {
       quarters: [{
         id: 1, label: 'Q1 2025', active: true,
-        objective: 'Uruchomić sprzedaż pierwszego produktu na Allegro',
+        objective: 'Zdominować świat — albo przynajmniej skończyć jeden projekt',
+        created: new Date(Date.now() - 14 * 86400000).toISOString(),
         krs: [
-          { id: 1, text: 'Wydrukować i przetestować 50 sztuk uchwytu Air Rail', progress: 20 },
-          { id: 2, text: 'Uzyskać 10 opinii 5★ na Allegro', progress: 0 },
-          { id: 3, text: 'Osiągnąć 500 PLN tygodniowego przychodu', progress: 0 },
+          { id: 1, text: 'Opracować plan podboju i nie zgubić go tym razem', progress: 35, created: new Date(Date.now() - 14 * 86400000).toLocaleString('pl-PL') },
+          { id: 2, text: 'Zbudować działające urządzenie (min. 1 sztuka)', progress: 10, created: new Date(Date.now() - 12 * 86400000).toLocaleString('pl-PL') },
+          { id: 3, text: 'Przekonać co najmniej 3 osoby że plan ma sens', progress: 0, created: new Date(Date.now() - 10 * 86400000).toLocaleString('pl-PL') },
         ]
       }]
     },
-    eisenhower: { q1: [], q2: [], q3: [], q4: [] },
+    eisenhower: {
+      q1: [
+        { id: 101, text: 'Uciec z laboratorium zanim przyjdzie ochrona', done: false, created: new Date(Date.now() - 2 * 86400000).toLocaleString('pl-PL'), eisQ: 'q1' },
+        { id: 102, text: 'Naprawić maszynę której Pinky przypadkowo używał jako trampoline', done: false, created: new Date(Date.now() - 1 * 86400000).toLocaleString('pl-PL'), eisQ: 'q1' },
+      ],
+      q2: [
+        { id: 103, text: 'Przygotować plan na przyszły tydzień (tym razem bez dziur logicznych)', done: false, created: new Date(Date.now() - 5 * 86400000).toLocaleString('pl-PL'), eisQ: 'q2' },
+        { id: 104, text: 'Przeczytać artykuł o neuronauce który leży od miesiąca', done: false, created: new Date(Date.now() - 7 * 86400000).toLocaleString('pl-PL'), eisQ: 'q2' },
+      ],
+      q3: [
+        { id: 105, text: 'Odpisać na pytanie Pinky'ego "co robimy jutro"', done: true, created: new Date(Date.now() - 3 * 86400000).toLocaleString('pl-PL'), eisQ: 'q3' },
+      ],
+      q4: [
+        { id: 106, text: 'Poukładać kolekcję serów według daty przydatności', done: false, created: new Date(Date.now() - 8 * 86400000).toLocaleString('pl-PL'), eisQ: 'q4' },
+      ]
+    },
     kanban: {
       cards: [
-        { id: 1, col: 'todo',   text: 'Test wydruku PETG — uchwyt Air Rail',  priority: 'high'   },
-        { id: 2, col: 'todo',   text: 'Zmierzyć średnicę rury w ambulansie',  priority: 'medium' },
-        { id: 3, col: 'inprog', text: 'Założyć konto @drat3d na TikToku',     priority: 'high'   },
+        { id: 101, col: 'todo',   text: 'Uciec z laboratorium zanim przyjdzie ochrona', priority: 'high', created: new Date(Date.now() - 2 * 86400000).toLocaleString('pl-PL'), fromEis: true },
+        { id: 102, col: 'todo',   text: 'Naprawić maszynę której Pinky przypadkowo używał jako trampoline', priority: 'high', created: new Date(Date.now() - 1 * 86400000).toLocaleString('pl-PL'), fromEis: true },
+        { id: 103, col: 'todo',   text: 'Przygotować plan na przyszły tydzień (tym razem bez dziur logicznych)', priority: 'medium', created: new Date(Date.now() - 5 * 86400000).toLocaleString('pl-PL'), fromEis: true },
+        { id: 104, col: 'inprog', text: 'Przeczytać artykuł o neuronauce który leży od miesiąca', priority: 'medium', created: new Date(Date.now() - 7 * 86400000).toLocaleString('pl-PL'), fromEis: true },
+        { id: 105, col: 'done',   text: 'Odpisać na pytanie Pinky'ego "co robimy jutro"', priority: 'low', created: new Date(Date.now() - 3 * 86400000).toLocaleString('pl-PL'), fromEis: true },
       ]
     },
     notes: [
-      { id: 1, title: 'Start', body: 'Silicon Based Dispatch — notatki robocze.', pinned: true, created: '2025-03-01' }
+      { id: 201, title: 'Plan na dziś wieczór', body: 'To samo co zawsze Pinky — próbujemy zdominować świat.
+
+Krok 1: zdobyć kontrolę nad globalną siecią serów.
+Krok 2: ???
+Krok 3: dominacja.', pinned: true, created: new Date(Date.now() - 1 * 86400000).toLocaleString('pl-PL') },
+      { id: 202, title: 'Obserwacja z laboratorium', body: 'Mysz bez planu to tylko mysz. Mysz z planem to potencjalny władca świata. Zapisać do OKR.', pinned: false, created: new Date(Date.now() - 3 * 86400000).toLocaleString('pl-PL') },
+      { id: 203, title: 'Pytanie Pinky'ego', body: 'Spytał dziś czy zdominowanie świata wlicza się do czasu wolnego. Nie wiem jak odpowiedzieć.', pinned: false, created: new Date(Date.now() - 5 * 86400000).toLocaleString('pl-PL') },
     ],
     lastUpdated: new Date().toLocaleDateString('pl-PL')
   };
