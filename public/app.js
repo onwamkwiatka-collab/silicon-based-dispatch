@@ -254,7 +254,36 @@ function renderOKR() {
     setState(d => ({ ...d, okr: { quarters: [...d.okr.quarters, { id: Date.now(), label: lbl, active: false, objective: obj, krs: [], created: new Date().toISOString() }] } }));
   }, C.blue, true, true));
 
-  if (!active) return div({}, {}, qtabs);
+  if (!active) {
+    const okrDescEmpty = renderDesc([
+      ['Metoda OKR — Objectives and Key Results',
+        'OKR to system zarzadzania celami stworzony w latach siedemdziesiatych przez Andy\'ego Grove\'a w Intelu, a spopularyzowany przez Google na poczatku lat dwutysieznych. Nazwa pochodzi od dwoch elementow: Objective - cel glowny, oraz Key Results - kluczowe wyniki potwierdzajace jego osiagniecie.' +
+        '\n\nFundamentalna zasada OKR brzmi: nie wystarczy wiedziec dokad zmierzasz, musisz wiedziec jak zmierzysz ze tam dotarles. Cel bez mierzalnych wynikow jest zyczeniem. Wyniki bez celu sa lista zadan bez sensu.',
+        true],
+      ['Objective - cel glowny',
+        'Objective powinien byc inspirujacy, konkretny i osiagalny w horyzoncie jednego kwartalu. Dobry cel odpowiada na pytanie: co chce osiagnac i dlaczego to wazne.' +
+        '\n\nCel powinien byc ambitny ale realistyczny. Jesli jestes pewien ze osiagniesz sto procent, cel jest zbyt latwy.',
+        false],
+      ['Key Results - kluczowe wyniki',
+        'Kluczowe wyniki to mierzalne dowody ze cel zostal osiagniety. Kazdy wynik musi miec liczbe. Zalecane sa dwa do czterech wynikow na jeden cel.' +
+        '\n\nKluczowe wyniki nie sa lista dzialan. "Zadzwonic do dziesieciu klientow" to dzialanie. "Pozyskac trzech nowych klientow" to wynik.',
+        false],
+      ['Rytm pracy z OKR',
+        'OKR dziala w cyklach kwartalnych. Na poczatku kwartalu definiujesz cel i kluczowe wyniki. Raz w tygodniu aktualizujesz postep. Na koncu kwartalu oceniasz wyniki i definiujesz cel na kolejny kwartal.' +
+        '\n\nCotygodniowy przeglad jest kluczowy. Pietnascie minut tygodniowo wystarcza zeby system dzialal.',
+        false],
+      ['OKR a ADHD',
+        'Dla osob z ADHD OKR rozwiazuje konkretny problem: brak polaczenia miedzy codziennymi dzialaniami a dlugookresowym kierunkiem. ADHD sprzyja reaktywnosci.' +
+        '\n\nOKR tworzy zewnetrzny punkt odniesienia: czy to przybliза mnie do celu kwartalnego? Jesli nie — moze poczekac lub odpada.' +
+        '\n\nZacznij od jednego celu kwartalnego. Jeden cel zmusza do wyboru co jest naprawde wazne.',
+        false],
+      ['OKR a pozostale elementy systemu',
+        'OKR jest kompasem dla calego systemu. Macierz Eisenhowera filtruje zadania wzgledem OKR. Kanban realizuje zadania ktore przeszly przez filtr.' +
+        '\n\nBez OKR Eisenhower i kanban pomagaja robic rzeczy sprawnie, ale nie gwarantuja ze robisz wlasciwe rzeczy.',
+        false],
+    ], C.purple);
+    return div({}, {}, qtabs, okrDescEmpty);
+  }
 
   const progress = active.krs.length > 0
     ? Math.round(active.krs.reduce((a, k) => a + k.progress, 0) / active.krs.length) : 0;
