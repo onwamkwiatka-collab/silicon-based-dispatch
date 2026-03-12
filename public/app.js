@@ -136,6 +136,7 @@ function renderOKR() {
   // Quarter tabs
   const qtabs = div({ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }, {});
   quarters.forEach(q => {
+    const qWrap = div({ display: 'flex', alignItems: 'center', gap: '2px' }, {});
     const b = btn({
       padding: '6px 14px', borderRadius: '99px',
       border: `1px solid ${q.active ? C.blue : C.border}`,
@@ -143,7 +144,22 @@ function renderOKR() {
       color: q.active ? C.blue : C.muted,
       fontWeight: '700', fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit',
     }, { onClick: () => setState(d => ({ ...d, okr: { quarters: d.okr.quarters.map(x => ({ ...x, active: x.id === q.id })) } })) }, q.label);
-    qtabs.appendChild(b);
+    qWrap.appendChild(b);
+    const delQ = btn({
+      background: 'none', border: 'none', color: C.dim, cursor: 'pointer',
+      fontSize: '13px', padding: '2px 4px', borderRadius: '4px',
+    }, {
+      onClick: () => {
+        if (!confirm(`Usunąć kwartał "${q.label}"?`)) return;
+        setState(d => {
+          const remaining = d.okr.quarters.filter(x => x.id !== q.id);
+          if (remaining.length > 0 && !remaining.find(x => x.active)) remaining[0].active = true;
+          return { ...d, okr: { quarters: remaining } };
+        });
+      }
+    }, '✕');
+    qWrap.appendChild(delQ);
+    qtabs.appendChild(qWrap);
   });
 
   // Add quarter btn
@@ -151,7 +167,7 @@ function renderOKR() {
     const lbl = prompt('Etykieta kwartału (np. Q2 2025):');
     if (!lbl) return;
     const obj = prompt('Cel kwartalny:') || '';
-    setState(d => ({ ...d, okr: { quarters: [...d.okr.quarters, { id: Date.now(), label: lbl, active: false, objective: obj, krs: [] }] } }));
+    setState(d => ({ ...d, okr: { quarters: [...d.okr.quarters, { id: Date.now(), label: lbl, active: false, objective: obj, krs: [], created: new Date().toISOString() }] } }));
   }, C.blue, true, true));
 
   if (!active) return div({}, {}, qtabs);
@@ -175,6 +191,15 @@ function renderOKR() {
     }
   }, active.objective || '(kliknij aby ustawić cel)');
   objCard.appendChild(objText);
+
+  // Created date + days elapsed
+  if (active.created) {
+    const days = Math.floor((Date.now() - new Date(active.created)) / 86400000);
+    const dateStr = new Date(active.created).toLocaleDateString('pl-PL');
+    objCard.appendChild(div({ fontSize: '11px', color: C.dim, marginBottom: '10px' }, {},
+      `Utworzono: ${dateStr} · ${days} ${days === 1 ? 'dzień' : days < 5 ? 'dni' : 'dni'} temu`
+    ));
+  }
 
   const progRow = div({ display: 'flex', alignItems: 'center', gap: '10px' }, {});
   progRow.appendChild(div({ flex: '1' }, {}, progressBar(progress, pColor)));
