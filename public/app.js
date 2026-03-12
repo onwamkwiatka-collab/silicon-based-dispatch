@@ -91,13 +91,9 @@ function defaultData() {
       ]
     },
     notes: [
-      { id: 201, title: 'Plan na dziś wieczór', body: 'To samo co zawsze Pinky — próbujemy zdominować świat.
-
-Krok 1: zdobyć kontrolę nad globalną siecią serów.
-Krok 2: ???
-Krok 3: dominacja.', pinned: true, created: new Date(Date.now() - 1 * 86400000).toLocaleString('pl-PL') },
+      { id: 201, title: 'Plan na dziś wieczur', body: 'To samo co zawsze Pinky — prubujemy zdominować świat.\n\nKrok 1: zdobyć kontrolę nad globalną siecią serów.\nKrok 2: ???\nKrok 3: dominacja.', pinned: true, created: new Date(Date.now() - 1 * 86400000).toLocaleString('pl-PL') },
       { id: 202, title: 'Obserwacja z laboratorium', body: 'Mysz bez planu to tylko mysz. Mysz z planem to potencjalny władca świata. Zapisać do OKR.', pinned: false, created: new Date(Date.now() - 3 * 86400000).toLocaleString('pl-PL') },
-      { id: 203, title: 'Pytanie Pinky\u2019ego', body: 'Spytał dziś czy zdominowanie świata wlicza się do czasu wolnego. Nie wiem jak odpowiedzieć.', pinned: false, created: new Date(Date.now() - 5 * 86400000).toLocaleString('pl-PL') },
+      { id: 203, title: 'Pytanie Pinky’ego', body: 'Spytał dziś czy zdominowanie świata wlicza się do czasu wolnego. Nie wiem jak odpowiedzieć.', pinned: false, created: new Date(Date.now() - 5 * 86400000).toLocaleString('pl-PL') },
     ],
     lastUpdated: new Date().toLocaleDateString('pl-PL')
   };
