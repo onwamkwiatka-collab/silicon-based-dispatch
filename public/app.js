@@ -289,46 +289,35 @@ function renderOKR() {
     borderTop: `3px solid ${C.purple}`,
   }, {});
 
-  const sections = [
-    ['Metoda OKR — Objectives and Key Results', 'OKR to system zarządzania celami stworzony w latach siedemdziesiątych przez Andy'ego Grove'a w Intelu, a spopularyzowany przez Google na początku lat dwutysięcznych. Nazwa pochodzi od dwóch elementów które tworzą każdy cel: Objective — cel główny, oraz Key Results — kluczowe wyniki potwierdzające jego osiągnięcie.
+  const okrDescEl = renderDesc([
+    ['Metoda OKR — Objectives and Key Results',
+      'OKR to system zarzadzania celami stworzony w latach siedemdziesiatych przez Andy\'ego Grove\'a w Intelu, a spopularyzowany przez Google na poczatku lat dwutysieznych. Nazwa pochodzi od dwoch elementow: Objective - cel glowny, oraz Key Results - kluczowe wyniki potwierdzajace jego osiagniecie.' +
+      '\n\nFundamentalna zasada OKR brzmi: nie wystarczy wiedziec dokad zmierzasz, musisz wiedziec jak zmierzysz ze tam dotarles. Cel bez mierzalnych wynikow jest zyczeniem. Wyniki bez celu sa lista zadan bez sensu.',
+      true],
+    ['Objective - cel glowny',
+      'Objective powinien byc inspirujacy, konkretny i osiagalny w horyzoncie jednego kwartalu. Dobry cel odpowiada na pytanie: co chce osiagnac i dlaczego to wazne. Cel nie jest zadaniem do wykonania - jest stanem ktory chcesz osiagnac.' +
+      '\n\nCel powinien byc ambitny ale realistyczny. Twurcy metody zalecaja kalibracje na poziomie siedemdziesieciu procent - jesli jestes pewien ze osiagniesz sto procent, cel jest zbyt latwy.',
+      false],
+    ['Key Results - kluczowe wyniki',
+      'Kluczowe wyniki to mierzalne dowody ze cel zostal osiagniety. Kazdy wynik musi miec liczbe - bez liczby nie ma mozliwosci oceny postepu. Zalecane sa dwa do czterech wynikow na jeden cel.' +
+      '\n\nKluczowe wyniki nie sa lista dzialan. "Zadzwonic do dziesieciu klientow" to dzialanie. "Pozyskac trzech nowych klientow" to wynik.',
+      false],
+    ['Rytm pracy z OKR',
+      'OKR dziala w cyklach kwartalnych. Na poczatku kwartalu definiujesz cel i kluczowe wyniki. Raz w tygodniu aktualizujesz postep i zadajesz sobie pytanie: czy to co robilem przyblizylo mnie do celu. Na koncu kwartalu oceniasz wyniki i definiujesz cel na kolejny kwartal.' +
+      '\n\nCotygodniowy przeglad jest kluczowy. Pietnascie minut tygodniowo wystarcza zeby system dzialal.',
+      false],
+    ['OKR a ADHD',
+      'Dla osob z ADHD OKR rozwiazuje konkretny problem: brak polaczenia miedzy codziennymi dzialaniami a dlugookresowym kierunkiem. ADHD sprzyja reaktywnosci - robisz to co pojawia sie przed toba, a nie to co prowadzi do celu.' +
+      '\n\nOKR tworzy zewnetrzny punkt odniesienia ktory pozwala ocenic kazde nowe zadanie jednym pytaniem: czy to przybliза mnie do celu kwartalnego. Jesli nie - moze poczekac lub odpada.' +
+      '\n\nWazne jest zeby nie miec wiecej niz jednego celu kwartalnego na poczatku. Jeden cel zmusza do wyboru co jest naprawde wazne.',
+      false],
+    ['OKR a pozostale elementy systemu',
+      'OKR jest kompasem dla calego systemu. Macierz Eisenhowera filtruje zadania przez pryzmat waznosci - ale waznosc powinna byc oceniana wzgledem OKR, nie wzgledem tego co krzyczy najglosniej. Kanban realizuje zadania ktore przeszly przez filtr Eisenhowera.' +
+      '\n\nBez OKR Eisenhower i kanban sa narzędziami bez celu - pomagaja robic rzeczy sprawnie, ale nie gwarantuja ze robisz wlasciwe rzeczy.',
+      false],
+  ], C.purple);
 
-Fundamentalna zasada OKR brzmi: nie wystarczy wiedzieć dokąd zmierzasz, musisz wiedzieć jak zmierzysz że tam dotarłeś. Cel bez mierzalnych wyników jest życzeniem. Wyniki bez celu są listą zadań bez sensu. OKR łączy te dwa elementy w spójną całość.', true],
-    ['Objective — cel główny', 'Objective powinien być inspirujący, konkretny i osiągalny w horyzoncie jednego kwartału. Dobry cel odpowiada na pytanie: co chcę osiągnąć i dlaczego to ważne. Cel nie jest zadaniem do wykonania — jest stanem który chcesz osiągnąć.
-
-Cel powinien być ambitny ale realistyczny. Twórcy metody zalecają kalibrację na poziomie siedemdziesięciu procent — jeśli jesteś pewien że osiągniesz sto procent, cel jest zbyt łatwy.', false],
-    ['Key Results — kluczowe wyniki', 'Kluczowe wyniki to mierzalne dowody że cel został osiągnięty. Każdy wynik musi mieć liczbę — bez liczby nie ma możliwości oceny postępu. Zalecane są dwa do czterech wyników na jeden cel.
-
-Kluczowe wyniki nie są listą działań. "Zadzwonić do dziesięciu klientów" to działanie. "Pozyskać trzech nowych klientów" to wynik.', false],
-    ['Rytm pracy z OKR', 'OKR działa w cyklach kwartalnych. Na początku kwartału definiujesz cel i kluczowe wyniki. Raz w tygodniu aktualizujesz postęp i zadajesz sobie pytanie: czy to co robiłem przybliżyło mnie do celu. Na końcu kwartału oceniasz wyniki i definiujesz cel na kolejny kwartał.
-
-Cotygodniowy przegląd jest kluczowy. Piętnaście minut tygodniowo wystarcza żeby system działał.', false],
-    ['OKR a ADHD', 'Dla osób z ADHD OKR rozwiązuje konkretny problem: brak połączenia między codziennymi działaniami a długoterminowym kierunkiem. ADHD sprzyja reaktywności — robisz to co pojawia się przed tobą, a nie to co prowadzi do celu.
-
-OKR tworzy zewnętrzny punkt odniesienia który pozwala ocenić każde nowe zadanie jednym pytaniem: czy to przybliża mnie do celu kwartalnego. Jeśli nie — może poczekać lub odpada.
-
-Ważne jest żeby nie mieć więcej niż jednego celu kwartalnego na początku. Jeden cel zmusza do wyboru co jest naprawdę ważne.', false],
-    ['OKR a pozostałe elementy systemu', 'OKR jest kompasem dla całego systemu. Macierz Eisenhowera filtruje zadania przez pryzmat ważności — ale ważność powinna być oceniana względem OKR, nie względem tego co krzyczy najgłośniej. Kanban realizuje zadania które przeszły przez filtr Eisenhowera. Notatki zbierają obserwacje które mogą wpłynąć na kolejny OKR.
-
-Bez OKR Eisenhower i kanban są narzędziami bez celu — pomagają robić rzeczy sprawnie, ale nie gwarantują że robisz właściwe rzeczy.', false],
-  ];
-
-  sections.forEach(([title, body, first]) => {
-    const s = div({ marginBottom: '16px' }, {});
-    s.appendChild(div({
-      fontSize: first ? '14px' : '12px',
-      fontWeight: '700',
-      color: first ? C.text : C.purple,
-      marginBottom: '6px',
-      paddingBottom: first ? '8px' : '0',
-      borderBottom: first ? `1px solid ${C.border}` : 'none',
-    }, {}, title));
-    body.split('\n\n').forEach(para => {
-      s.appendChild(div({ fontSize: '12px', color: C.muted, lineHeight: '1.7', marginBottom: '6px' }, {}, para));
-    });
-    desc.appendChild(s);
-  });
-
-  return div({}, {}, qtabs, objCard, krsSection, desc);
+  return div({}, {}, qtabs, objCard, krsSection, okrDescEl);
 }
 
 // ── EISENHOWER ────────────────────────────────────────────────────
