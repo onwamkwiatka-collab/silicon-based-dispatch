@@ -815,9 +815,12 @@ function renderLogin() {
       loginBtn.textContent = 'Logowanie...';
       loginBtn.disabled = true;
       try {
-        await signInWithPopup(auth, new GoogleAuthProvider());
+        const result = await signInWithPopup(auth, new GoogleAuthProvider());
+        console.log('Login OK:', result.user.email);
       } catch(e) {
-        loginBtn.textContent = 'Spróbuj ponownie';
+        console.error('Login error code:', e.code);
+        console.error('Login error message:', e.message);
+        loginBtn.textContent = 'Błąd: ' + e.code;
         loginBtn.disabled = false;
       }
     }
