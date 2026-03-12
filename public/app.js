@@ -472,6 +472,12 @@ function renderNotes() {
 }
 
 // ── TABS ──────────────────────────────────────────────────────────
+const TAB_DESCRIPTIONS = {
+  okr: 'OKR działa na poziomie strategicznym. Raz na kwartał definiujesz jeden cel główny — konkretny, mierzalny, osiągalny w 90 dni. Cel rozkładasz na 2-4 kluczowe wyniki. Raz w tygodniu aktualizujesz suwaki postępu. Jeśli zadanie w kanbanie nie przybliża do żadnego OKR — zapytaj czy warto je robić.',
+  eisenhower: 'Używasz raz w tygodniu — najlepiej w niedzielę wieczorem przez 15 minut. Ważne i niepilne to tu buduje się długoterminowa wartość — chroń ten czas. Do kanbana trafia tylko to co przeszło przez ten filtr.',
+  kanban: 'Poziom operacyjny — co robisz dziś i jutro. Twardy limit: 3 zadania w toku jednocześnie. Zanim zaczniesz nowe, zamknij jedno otwarte. Zadanie wchodzi z lewej, wychodzi prawą stroną.',
+  notes: 'Bufor między rzeczywistością a systemem. Wszystko co pojawia się w głowie ląduje tu natychmiast. Raz w tygodniu podczas przeglądu niedzielnego decydujesz: zadanie do Eisenhowera, pomysł do pipeline, czy można usunąć.',
+};
 const TABS = [
   { id: 'okr',        label: '🎯 OKR'      },
   { id: 'eisenhower', label: '⬛ Priorytety' },
@@ -505,7 +511,7 @@ function render() {
       span({ color: C.muted, fontWeight: '400' }, {}, ' BASED '),
       span({ color: C.text }, {}, 'DISPATCH'),
     ),
-    div({ fontSize: '10px', color: C.dim, marginTop: '2px' }, {}, `Aktualizacja: ${state.lastUpdated}`)
+   div({ fontSize: '12px', color: C.muted, lineHeight: '1.6', marginBottom: '16px', padding: '10px 14px', background: C.panel, borderRadius: '8px', borderLeft: `3px solid ${C.blue}` }, {}, TAB_DESCRIPTIONS[activeTab] || '')
   ));
 
   const stats = div({ display: 'flex', gap: '6px' }, {});
