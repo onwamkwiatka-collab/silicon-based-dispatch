@@ -357,7 +357,23 @@ function renderEisenhower() {
     grid.appendChild(qDiv);
   }
 
-  grid.appendChild(div({ fontSize: '11px', color: C.dim, textAlign: 'center', gridColumn: '1/-1', marginTop: '4px' }, {}, 'Przeciągnij zadanie między ćwiartkami'));
+  grid.appendChild(div({ fontSize: '11px', color: C.dim, textAlign: 'center', gridColumn: '1/-1', marginTop: '4px' }, {}, 'Metoda OKR — Objectives and Key Results
+OKR to system zarządzania celami stworzony w latach siedemdziesiątych przez Andy'ego Grove'a w Intelu, a spopularyzowany przez Google na początku lat dwutysięcznych. Nazwa pochodzi od dwóch elementów które tworzą każdy cel: Objective — cel główny, oraz Key Results — kluczowe wyniki potwierdzające jego osiągnięcie.
+Fundamentalna zasada OKR brzmi: nie wystarczy wiedzieć dokąd zmierzasz, musisz wiedzieć jak zmierzysz że tam dotarłeś. Cel bez mierzalnych wyników jest życzeniem. Wyniki bez celu są listą zadań bez sensu. OKR łączy te dwa elementy w spójną całość.
+Objective — cel główny
+Objective powinien być inspirujący, konkretny i osiągalny w horyzoncie jednego kwartału. Dobry cel odpowiada na pytanie: co chcę osiągnąć i dlaczego to ważne. Cel nie jest zadaniem do wykonania — jest stanem który chcesz osiągnąć. Różnica między "zrobić stronę internetową" a "zbudować obecność online która przyciąga klientów" ilustruje tę różnicę. Pierwsze to zadanie, drugie to cel.
+Cel powinien być ambitny ale realistyczny. Twórcy metody zalecają kalibrację na poziomie siedemdziesięciu procent — jeśli jesteś pewien że osiągniesz sto procent, cel jest zbyt łatwy. Jednocześnie cel nieosiągalny demoralizuje zamiast motywować.
+Key Results — kluczowe wyniki
+Kluczowe wyniki to mierzalne dowody że cel został osiągnięty. Każdy wynik musi mieć liczbę — bez liczby nie ma możliwości oceny postępu. Dobry kluczowy wynik odpowiada na pytanie: skąd będę wiedział że osiągnąłem cel. Zalecane są dwa do czterech wyników na jeden cel. Więcej rozmywa uwagę, mniej może nie oddawać pełnego obrazu sukcesu.
+Kluczowe wyniki nie są listą działań. "Zadzwonić do dziesięciu klientów" to działanie. "Pozyskać trzech nowych klientów" to wynik. Różnica jest subtelna ale istotna — wynik mówi co osiągasz, działanie mówi co robisz.
+Rytm pracy z OKR
+OKR działa w cyklach kwartalnych. Na początku kwartału definiujesz cel i kluczowe wyniki — to zajmuje trzydzieści minut skupionej pracy. Raz w tygodniu, najlepiej w stały dzień, aktualizujesz postęp każdego wyniku i zadajesz sobie jedno pytanie: czy to co robiłem w tym tygodniu przybliżyło mnie do celu. Na końcu kwartału oceniasz co osiągnąłeś, wyciągasz wnioski i definiujesz cel na kolejny kwartał.
+Cotygodniowy przegląd jest kluczowy. OKR bez regularnej oceny postępu staje się dokumentem który tworzysz raz a potem zapominasz. Piętnaście minut tygodniowo wystarcza żeby system działał.
+OKR a ADHD
+Dla osób z ADHD OKR rozwiązuje konkretny problem: brak połączenia między codziennymi działaniami a długoterminowym kierunkiem. ADHD sprzyja reaktywności — robisz to co pojawia się przed tobą, a nie to co prowadzi do celu. OKR tworzy zewnętrzny punkt odniesienia który pozwala ocenić każde nowe zadanie jednym pytaniem: czy to przybliża mnie do celu kwartalnego. Jeśli nie — może poczekać lub odpada.
+Ważne jest żeby nie mieć więcej niż jednego celu kwartalnego na początku. Jeden cel zmusza do wyboru co jest naprawdę ważne. Wiele celów jednocześnie to brak celu.
+OKR a pozostałe elementy systemu
+OKR jest kompasem dla całego systemu. Macierz Eisenhowera filtruje zadania przez pryzmat ważności i pilności — ale ważność powinna być oceniana względem OKR, nie względem tego co krzyczy najgłośniej. Kanban realizuje zadania które przeszły przez filtr Eisenhowera. Notatki zbierają obserwacje które mogą wpłynąć na kolejny OKR.'));
   return grid;
 }
 
