@@ -1,19 +1,54 @@
 // Silicon Based Dispatch — PWA
 // OKR + Eisenhower + Kanban + Notatki
 
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC0r-9-tNRxH6-VP1Rl0dnYmtOsMj1o--o",
+  authDomain: "silocon-based-dispatch.firebaseapp.com",
+  projectId: "silocon-based-dispatch",
+  storageBucket: "silocon-based-dispatch.firebasestorage.app",
+  messagingSenderId: "694502005261",
+  appId: "1:694502005261:web:3df081fcc0b23809071344",
+};
+
+const fbApp  = initializeApp(firebaseConfig);
+const auth   = getAuth(fbApp);
+const db     = getFirestore(fbApp);
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
+// ── Current user ──────────────────────────────────────────────────
+let currentUser = null;
+
 // ── Storage ───────────────────────────────────────────────────────
 const SK = 'sbd-v1';
+
 function load() {
   try { return JSON.parse(localStorage.getItem(SK)) || defaultData(); }
   catch { return defaultData(); }
 }
+
 function save(d) {
   d.lastUpdated = new Date().toLocaleDateString('pl-PL');
   localStorage.setItem(SK, JSON.stringify(d));
+  if (currentUser) {
+    setDoc(doc(db, 'users', currentUser.uid, 'data', 'main'), d).catch(console.error);
+  }
+}
+
+async function loadFromCloud() {
+  if (!currentUser) return null;
+  try {
+    const snap = await getDoc(doc(db, 'users', currentUser.uid, 'data', 'main'));
+    return snap.exists() ? snap.data() : null;
+  } catch { return null; }
 }
 
 function defaultData() {
@@ -665,7 +700,22 @@ function render() {
     div({ fontSize: '8px', color: C.muted, textTransform: 'uppercase', letterSpacing: '0.5px' }, {}, 'W toku'),
     div({ fontSize: '13px', fontWeight: '800', color: wip > 3 ? C.yellow : C.text }, {}, `${wip}/3`)
   ));
-  hInner.appendChild(stats);
+  // User + sign out
+  if (currentUser) {
+    const userRow = div({ display: 'flex', alignItems: 'center', gap: '8px' }, {});
+    userRow.appendChild(stats);
+    const avatar = currentUser.photoURL
+      ? (() => { const img = document.createElement('img'); img.src = currentUser.photoURL; img.style.cssText = 'width:28px;height:28px;border-radius:50%;border:1px solid '+C.border; return img; })()
+      : div({ width: '28px', height: '28px', borderRadius: '50%', background: C.border, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }, {}, '👤');
+    userRow.appendChild(avatar);
+    userRow.appendChild(btn({
+      background: 'none', border: `1px solid ${C.border}`, borderRadius: '6px',
+      color: C.muted, fontSize: '11px', padding: '4px 8px', cursor: 'pointer', fontFamily: 'inherit',
+    }, { onClick: () => signOut(auth) }, 'Wyloguj'));
+    hInner.appendChild(userRow);
+  } else {
+    hInner.appendChild(stats);
+  }
   header.appendChild(hInner);
   root.appendChild(header);
 
@@ -736,5 +786,73 @@ window.addEventListener('beforeinstallprompt', e => {
   render();
 });
 
+// ── Auth UI ───────────────────────────────────────────────────────
+function renderLogin() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+  root.style.cssText = `min-height:100vh;background:${C.bg};font-family:-apple-system,'Segoe UI',sans-serif;color:${C.text};display:flex;align-items:center;justify-content:center;`;
+
+  const box = div({
+    background: C.surface, border: `1px solid ${C.border}`,
+    borderRadius: '16px', padding: '40px 32px', textAlign: 'center',
+    maxWidth: '320px', width: '100%',
+  }, {});
+
+  box.appendChild(div({ fontWeight: '900', fontSize: '20px', letterSpacing: '-0.5px', marginBottom: '8px' }, {},
+    span({ color: C.blue }, {}, 'SILICON'),
+    span({ color: C.muted, fontWeight: '400' }, {}, ' BASED '),
+    span({ color: C.text }, {}, 'DISPATCH'),
+  ));
+  box.appendChild(div({ fontSize: '12px', color: C.muted, marginBottom: '32px' }, {}, 'System pracy — OKR · Eisenhower · Kanban'));
+
+  const loginBtn = btn({
+    background: C.blue, border: 'none', borderRadius: '10px',
+    color: '#fff', fontWeight: '700', fontSize: '14px',
+    padding: '12px 24px', cursor: 'pointer', fontFamily: 'inherit',
+    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+  }, {
+    onClick: async () => {
+      loginBtn.textContent = 'Logowanie...';
+      loginBtn.disabled = true;
+      try {
+        await signInWithPopup(auth, new GoogleAuthProvider());
+      } catch(e) {
+        loginBtn.textContent = 'Spróbuj ponownie';
+        loginBtn.disabled = false;
+      }
+    }
+  }, '🔑 Zaloguj przez Google');
+
+  box.appendChild(loginBtn);
+  box.appendChild(div({ fontSize: '11px', color: C.dim, marginTop: '20px' }, {}, 'Dane zapisywane w chmurze · każdy użytkownik ma swoje konto'));
+  root.appendChild(box);
+}
+
+function renderLoading() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+  root.style.cssText = `min-height:100vh;background:${C.bg};font-family:-apple-system,'Segoe UI',sans-serif;color:${C.text};display:flex;align-items:center;justify-content:center;`;
+  root.appendChild(div({ color: C.muted, fontSize: '13px' }, {}, 'Ładowanie...'));
+}
+
 // ── Init ──────────────────────────────────────────────────────────
-render();
+renderLoading();
+
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (!user) {
+    renderLogin();
+    return;
+  }
+  // Load from cloud, fall back to localStorage
+  const cloudData = await loadFromCloud();
+  if (cloudData) {
+    state = cloudData;
+    localStorage.setItem(SK, JSON.stringify(state));
+  } else {
+    state = load();
+    // First login — push local data to cloud
+    save(state);
+  }
+  render();
+});
