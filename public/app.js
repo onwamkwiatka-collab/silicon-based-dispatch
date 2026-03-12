@@ -39,7 +39,7 @@ function save(d) {
   d.lastUpdated = new Date().toLocaleDateString('pl-PL');
   localStorage.setItem(SK, JSON.stringify(d));
   if (currentUser) {
-    setDoc(doc(db, 'users', currentUser.uid, 'data', 'main'), d).catch(console.error);
+    setDoc(doc(db, 'users', currentUser.uid, 'data', 'main'), { json: JSON.stringify(d) }).catch(console.error);
   }
 }
 
@@ -47,7 +47,11 @@ async function loadFromCloud() {
   if (!currentUser) return null;
   try {
     const snap = await getDoc(doc(db, 'users', currentUser.uid, 'data', 'main'));
-    return snap.exists() ? snap.data() : null;
+    if (!snap.exists()) return null;
+    const raw = snap.data();
+    // Support both old format (flat object) and new format (json string)
+    if (raw.json) return JSON.parse(raw.json);
+    return raw;
   } catch { return null; }
 }
 
